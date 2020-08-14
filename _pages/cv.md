@@ -8,4 +8,4 @@ redirect_from:
 ---
 
 [CV] (https://drive.google.com/file/d/1fOEmArrSHx6jWEFlcX208tpmPhgYpAwP/view?usp=sharing)
-<a href="https://drive.google.com/file/d/1fOEmArrSHx6jWEFlcX208tpmPhgYpAwP/view?usp=sharing" target="_top">CV</a>
+<a href="https://drive.google.com/file/d/1fOEmArrSHx6jWEFlcX208tpmPhgYpAwP/view?usp=sharing">CV</a>
