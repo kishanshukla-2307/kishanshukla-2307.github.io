@@ -7,7 +7,7 @@
 
 # Site Settings
 locale                   : "en-US"
-title                    : "Hello :)"
+title                    : "Home"
 title_separator          : "-"
 name                     : &name "Kishan Shukla"
 description              : &description "Undergraduate student at IIT Kanpur"
