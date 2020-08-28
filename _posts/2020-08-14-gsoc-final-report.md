@@ -1,6 +1,6 @@
 ---
 title: 'Google Summer of Code 2020'
-date: 2020-08-14
+date: 2020-08-31
 permalink: /posts/2020/08/gsoc-final-evaluation/
 tags:
   - Google Summer of Code 2020
