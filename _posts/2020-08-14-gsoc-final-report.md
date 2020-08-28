@@ -77,12 +77,6 @@ case OPERATION::INTEGER_POWER: {
 	throw negative_integers_not_supported();
     }
 
-    bool exponent_is_even = false;
-
-    if (remainder.empty()) {
-	exponent_is_even = true;
-    }
-
     if (ro.get_lhs_itr().get_interval().positive()) {
 	this->_approximation_interval.upper_bound = 
 		tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().upper_bound, exponent);
