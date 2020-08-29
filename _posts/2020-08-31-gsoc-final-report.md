@@ -134,70 +134,69 @@ __Milestones:__<br>
 Pi digits were calculated using Chudnovsky algorithm. The implementation is not the most efficient one therefore after few digits the algorithm runs slow. Chudnovsky algorithm is an iterative algorithm which is being used to calculate the n<sup>th</sup> digit of the real_algorithm number. There are redundant calculations being performed as for calculating (n + 1)<sup>th</sup> digit, the algorithm recalculates the previously calculated values as this time it needs more precise values than previous. There is an algorithm which calculates n<sup>th</sup> digit without calculating previous digits, but the algorithm gives output in hexadecimal base, which doesn't fulfill our requirement.  
 Following is overview of how Chudnovsky algorithm has been implemented (few lines of code has been skipped) :  
 
+<pre style='color:#000000;background:#F5F5F5;font-size:8pt'><span style='color:#800000; font-weight:bold; '>template</span> <span style='color:#800080; '>&lt;</span><span style='color:#800000; font-weight:bold; '>typename</span> T <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>int</span><span style='color:#800080; '>></span>
+T pi_nth_digit<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>unsigned</span> <span style='color:#800000; font-weight:bold; '>int</span> n<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+	<span style='color:#696969; '>// Chudnovsky Algorithm</span>
+	<span style='color:#696969; '>// pi = C * ( sum_from_k=0_to_k=x (Mk * Lk / Xk) )^(-1) </span>
+	<span style='color:#696969; '>// increasing x you get more precise pi</span>
 
-```cpp
-template <typename T = int>
-T pi_nth_digit(unsigned int n) {
-	// Chudnovsky Algorithm
-	// pi = C * ( sum_from_k=0_to_k=x (Mk * Lk / Xk) )^(-1) 
-	// increasing x you get more precise pi
+	<span style='color:#800000; font-weight:bold; '>static</span> <span style='color:#800000; font-weight:bold; '>const</span> boost<span style='color:#800080; '>::</span>real<span style='color:#800080; '>::</span>real_explicit<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> real_k<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>6</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>static</span> <span style='color:#800000; font-weight:bold; '>const</span> boost<span style='color:#800080; '>::</span>real<span style='color:#800080; '>::</span>real_explicit<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> real_m<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>1</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>static</span> <span style='color:#800000; font-weight:bold; '>const</span> boost<span style='color:#800080; '>::</span>real<span style='color:#800080; '>::</span>real_explicit<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> real_l<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>13591409</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>static</span> <span style='color:#800000; font-weight:bold; '>const</span> boost<span style='color:#800080; '>::</span>real<span style='color:#800080; '>::</span>real_explicit<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> real_l0<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>545140134</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>static</span> <span style='color:#800000; font-weight:bold; '>const</span> boost<span style='color:#800080; '>::</span>real<span style='color:#800080; '>::</span>real_explicit<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> real_x<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>1</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>static</span> <span style='color:#800000; font-weight:bold; '>const</span> boost<span style='color:#800080; '>::</span>real<span style='color:#800080; '>::</span>real_explicit<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> real_x0<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>-262537412640768000</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>static</span> <span style='color:#800000; font-weight:bold; '>const</span> boost<span style='color:#800080; '>::</span>real<span style='color:#800080; '>::</span>real_explicit<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> real_s<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>13591409</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	static const boost::real::real_explicit<T> real_k("6");
-	static const boost::real::real_explicit<T> real_m("1");
-	static const boost::real::real_explicit<T> real_l("13591409");
-	static const boost::real::real_explicit<T> real_l0("545140134");
-	static const boost::real::real_explicit<T> real_x("1");
-	static const boost::real::real_explicit<T> real_x0("-262537412640768000");
-	static const boost::real::real_explicit<T> real_s("13591409");
+	<span style='color:#800000; font-weight:bold; '>static</span> exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> L0 <span style='color:#808030; '>=</span> real_l0<span style='color:#808030; '>.</span>get_exact_number<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>static</span> exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> X0 <span style='color:#808030; '>=</span> real_x0<span style='color:#808030; '>.</span>get_exact_number<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	static exact_number<T> L0 = real_l0.get_exact_number();
-	static exact_number<T> X0 = real_x0.get_exact_number();
+	<span style='color:#800000; font-weight:bold; '>bool</span> nth_digit_found <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>false</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>bool</span> first_iteration_over <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>false</span><span style='color:#800080; '>;</span>
 
-	bool nth_digit_found = false;
-	bool first_iteration_over = false;
+	exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> iteration_number <span style='color:#808030; '>=</span> one<span style='color:#800080; '>;</span>
+	exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> prev_pi<span style='color:#800080; '>;</span>
+	exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> pi<span style='color:#800080; '>;</span>
+	exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> error<span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>const</span> exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> max_error<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#ffffff; font-weight:bold; font-style:italic; '>{</span><span style='color:#008c00; '>1</span><span style='color:#ffffff; font-weight:bold; font-style:italic; '>}</span><span style='color:#808030; '>,</span> <span style='color:#808030; '>-</span><span style='color:#808030; '>(</span>n <span style='color:#808030; '>+</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	exact_number<T> iteration_number = one;
-	exact_number<T> prev_pi;
-	exact_number<T> pi;
-	exact_number<T> error;
-	const exact_number<T> max_error(std::vector<T> {1}, -(n + 1), true);
+	<span style='color:#800000; font-weight:bold; '>do</span> <span style='color:#800080; '>{</span>  
+	    exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> temp <span style='color:#808030; '>=</span> K <span style='color:#808030; '>*</span> K <span style='color:#808030; '>*</span> K <span style='color:#808030; '>-</span> _16 <span style='color:#808030; '>*</span> K<span style='color:#800080; '>;</span>
+	    temp<span style='color:#808030; '>.</span>divide_vector<span style='color:#808030; '>(</span>iteration_number <span style='color:#808030; '>*</span> iteration_number <span style='color:#808030; '>*</span> iteration_number<span style='color:#808030; '>,</span> n <span style='color:#808030; '>+</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    M <span style='color:#808030; '>*</span><span style='color:#808030; '>=</span> temp<span style='color:#800080; '>;</span>
+	    X <span style='color:#808030; '>*</span><span style='color:#808030; '>=</span> X0<span style='color:#800080; '>;</span>
+	    L <span style='color:#808030; '>+</span><span style='color:#808030; '>=</span> L0<span style='color:#800080; '>;</span>
+	    K <span style='color:#808030; '>+</span><span style='color:#808030; '>=</span> _12<span style='color:#800080; '>;</span>
 
-	do {  
-	    exact_number<T> temp = K * K * K - _16 * K;
-	    temp.divide_vector(iteration_number * iteration_number * iteration_number, n + 1, true);
-	    M *= temp;
-	    X *= X0;
-	    L += L0;
-	    K += _12;
+	    temp <span style='color:#808030; '>=</span> M <span style='color:#808030; '>*</span> L<span style='color:#800080; '>;</span>
+	    temp<span style='color:#808030; '>.</span>divide_vector<span style='color:#808030; '>(</span>X<span style='color:#808030; '>,</span> n <span style='color:#808030; '>+</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>false</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    S <span style='color:#808030; '>+</span><span style='color:#808030; '>=</span> temp<span style='color:#800080; '>;</span>
 
-	    temp = M * L;
-	    temp.divide_vector(X, n + 1, false);
-	    S += temp;
+	    temp <span style='color:#808030; '>=</span> C<span style='color:#800080; '>;</span>
+	    temp<span style='color:#808030; '>.</span>divide_vector<span style='color:#808030; '>(</span>S<span style='color:#808030; '>,</span> n <span style='color:#808030; '>+</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>false</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	    temp = C;
-	    temp.divide_vector(S, n + 1, false);
+	    pi <span style='color:#808030; '>=</span> temp<span style='color:#800080; '>;</span>
+	    <span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span><span style='color:#808030; '>!</span>first_iteration_over<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+		prev_pi <span style='color:#808030; '>=</span> pi<span style='color:#800080; '>;</span>
+		first_iteration_over <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#800080; '>;</span>
+		iteration_number <span style='color:#808030; '>+</span><span style='color:#808030; '>=</span> one<span style='color:#800080; '>;</span>
+	    <span style='color:#800080; '>}</span> <span style='color:#800000; font-weight:bold; '>else</span> <span style='color:#800080; '>{</span>
+		error <span style='color:#808030; '>=</span> pi <span style='color:#808030; '>-</span> prev_pi<span style='color:#800080; '>;</span>
+		error<span style='color:#808030; '>.</span>positive <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#800080; '>;</span>
 
-	    pi = temp;
-	    if (!first_iteration_over) {
-		prev_pi = pi;
-		first_iteration_over = true;
-		iteration_number += one;
-	    } else {
-		error = pi - prev_pi;
-		error.positive = true;
+		<span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>error <span style='color:#808030; '>&lt;</span> max_error<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+		    nth_digit_found <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#800080; '>;</span>
+		<span style='color:#800080; '>}</span>
+		iteration_number <span style='color:#808030; '>+</span><span style='color:#808030; '>=</span> one<span style='color:#800080; '>;</span>
+		prev_pi <span style='color:#808030; '>=</span> pi<span style='color:#800080; '>;</span>
+	    <span style='color:#800080; '>}</span>
 
-		if (error < max_error) {
-		    nth_digit_found = true;
-		}
-		iteration_number += one;
-		prev_pi = pi;
-	    }
+	<span style='color:#800080; '>}</span> <span style='color:#800000; font-weight:bold; '>while</span> <span style='color:#808030; '>(</span><span style='color:#808030; '>!</span>nth_digit_found<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	} while (!nth_digit_found);
-
-	return pi[n];
-}
-```
+	<span style='color:#800000; font-weight:bold; '>return</span> pi<span style='color:#808030; '>[</span>n<span style='color:#808030; '>]</span><span style='color:#800080; '>;</span>
+<span style='color:#800080; '>}</span>
+</pre>
+<!--Created using ToHtml.com on 2020-08-29 06:50:35 UTC -->
 
 Intial commit regarding Pi: [https://github.com/BoostGSoC20/Real/commit/34ac759f128cd2ffb5d684c5ff7a5a0e54025360](https://github.com/BoostGSoC20/Real/commit/34ac759f128cd2ffb5d684c5ff7a5a0e54025360)  
 
