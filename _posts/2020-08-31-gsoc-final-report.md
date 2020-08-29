@@ -39,7 +39,8 @@ __Boost.Real__ is a C++17 library which aims at developing numerical data-type f
 - Implementation of method to evaluate Pi digits.
 - Implementaion of % operator.
 - Implementation of Karatsuba Multiplication algorithm.
-- Implementation of tests and documentation.  <br>
+- Implementation of tests and documentation.  
+
 Before the start of official coding period, we decided on not changing the base of the internal representation as changing it would make few operations more expensive resulting in poor performance.
 
 ## Phase I
