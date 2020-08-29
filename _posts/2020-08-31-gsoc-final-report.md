@@ -218,118 +218,118 @@ I implemented the Karatsuba algorithm which improved the performance of the mult
 
 Following is overview of how karatsuba algorithm has been implemented (few lines of code has been skipped) :  
 
+<pre style='color:#000000;background:#F5F5F5;font-size:9pt'><span style='color:#800000; font-weight:bold; '>template</span> <span style='color:#800080; '>&lt;</span><span style='color:#800000; font-weight:bold; '>typename</span> T <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>int</span><span style='color:#800080; '>></span>
+<span style='color:#800000; font-weight:bold; '>void</span> karatsuba_multiplication <span style='color:#808030; '>(</span>
+    exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>&amp;</span>other<span style='color:#808030; '>,</span> 
+    <span style='color:#800000; font-weight:bold; '>const</span> T base <span style='color:#808030; '>=</span> <span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span>numeric_limits<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span><span style='color:#800080; '>::</span><span style='color:#603000; '>max</span><span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>/</span> <span style='color:#008c00; '>4</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>*</span> <span style='color:#008c00; '>2</span>
+<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
 
-```cpp
-template <typename T = int>
-void karatsuba_multiplication (
-    exact_number<T> &other, 
-    const T base = (std::numeric_limits<T>::max() / 4) * 2
-) {
+	<span style='color:#696969; '>// this --- a, other --- b</span>
+	<span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800000; font-weight:bold; '>int</span> a_size <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>size<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800000; font-weight:bold; '>int</span> b_size <span style='color:#808030; '>=</span> other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>size<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800000; font-weight:bold; '>int</span> a_exponent <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>exponent<span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800000; font-weight:bold; '>int</span> b_exponent <span style='color:#808030; '>=</span> other<span style='color:#808030; '>.</span>exponent<span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800000; font-weight:bold; '>bool</span> a_sign <span style='color:#808030; '>=</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>positive<span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800000; font-weight:bold; '>bool</span> b_sign <span style='color:#808030; '>=</span> other<span style='color:#808030; '>.</span>positive<span style='color:#800080; '>;</span>
 
-	// this --- a, other --- b
-	const int a_size = this->digits.size();
-	const int b_size = other.digits.size();
-	const int a_exponent = this->exponent;
-	const int b_exponent = other.exponent;
-	const bool a_sign = this->positive;
-	const bool b_sign = other.positive;
+	<span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800000; font-weight:bold; '>int</span> max_length <span style='color:#808030; '>=</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>max</span><span style='color:#808030; '>(</span>a_size<span style='color:#808030; '>,</span> b_size<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	const int max_length = std::max(a_size, b_size);
+	<span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>max_length <span style='color:#808030; '>&lt;</span><span style='color:#808030; '>=</span> KARATSUBA_BASE_CASE_THRESHOLD <span style='color:#808030; '>|</span><span style='color:#808030; '>|</span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>abs</span><span style='color:#808030; '>(</span>a_size <span style='color:#808030; '>-</span> b_size<span style='color:#808030; '>)</span> <span style='color:#808030; '>></span> <span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>min</span><span style='color:#808030; '>(</span>a_size<span style='color:#808030; '>,</span> b_size<span style='color:#808030; '>)</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+	    <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>standard_multiplication<span style='color:#808030; '>(</span>other<span style='color:#808030; '>,</span> base<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    <span style='color:#800000; font-weight:bold; '>return</span><span style='color:#800080; '>;</span>
+	<span style='color:#800080; '>}</span>
 
-	if (max_length <= KARATSUBA_BASE_CASE_THRESHOLD || std::abs(a_size - b_size) > std::min(a_size, b_size)) {
-	    this->standard_multiplication(other, base);
-	    return;
-	}
+	<span style='color:#696969; '>// appending zeroes in front to make sizes of a &amp; b equal</span>
+	<span style='color:#800000; font-weight:bold; '>int</span> a_pref_zeroes <span style='color:#808030; '>=</span> <span style='color:#008c00; '>0</span><span style='color:#808030; '>,</span> b_pref_zeroes <span style='color:#808030; '>=</span> <span style='color:#008c00; '>0</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>a_size <span style='color:#808030; '>&lt;</span> max_length<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+	    a_pref_zeroes <span style='color:#808030; '>=</span> max_length <span style='color:#808030; '>-</span> a_size<span style='color:#800080; '>;</span>
+	<span style='color:#800080; '>}</span> <span style='color:#800000; font-weight:bold; '>else</span> <span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>b_size <span style='color:#808030; '>&lt;</span> max_length<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+	    b_pref_zeroes <span style='color:#808030; '>=</span> max_length <span style='color:#808030; '>-</span> b_size<span style='color:#800080; '>;</span>
+	<span style='color:#800080; '>}</span> 
 
-	// appending zeroes in front to make sizes of a & b equal
-	int a_pref_zeroes = 0, b_pref_zeroes = 0;
-	if (a_size < max_length) {
-	    a_pref_zeroes = max_length - a_size;
-	} else if (b_size < max_length) {
-	    b_pref_zeroes = max_length - b_size;
-	} 
+	<span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800000; font-weight:bold; '>int</span> left_half_length <span style='color:#808030; '>=</span> max_length <span style='color:#808030; '>/</span> <span style='color:#008c00; '>2</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>const</span> <span style='color:#800000; font-weight:bold; '>int</span> right_half_length <span style='color:#808030; '>=</span> max_length <span style='color:#808030; '>-</span> left_half_length<span style='color:#800080; '>;</span>
 
-	const int left_half_length = max_length / 2;
-	const int right_half_length = max_length - left_half_length;
-
-	/*
-		Variable Explanation
-	    a is vector representation of "this", b is vector representation of "other"
-	    a = exact_al * base^(right_half_length) + exact_ar
-	    b = exact_bl * base^(right_half_length) + exact_br
-	*/
+	<span style='color:#696969; '>/*</span>
+<span style='color:#696969; '>		Variable Explanation</span>
+<span style='color:#696969; '>	    a is vector representation of "this", b is vector representation of "other"</span>
+<span style='color:#696969; '>	    a = exact_al * base^(right_half_length) + exact_ar</span>
+<span style='color:#696969; '>	    b = exact_bl * base^(right_half_length) + exact_br</span>
+<span style='color:#696969; '>	*/</span>
 	
-	// This is where we perform optimization (not appending zeroes in vector)
-	if (a_pref_zeroes > 0) {
-	    if (a_pref_zeroes >= left_half_length) {
-		exact_al = exact_number(std::vector<T> (), true);
-		exact_ar = exact_number(this->digits, true);
-	    } else {
-		exact_al = exact_number(std::vector<T> (this->digits.begin(), this->digits.begin() + left_half_length - a_pref_zeroes), true);
-		exact_ar = exact_number(std::vector<T> (this->digits.begin() + left_half_length - a_pref_zeroes, this->digits.end()), true);
-	    }
-	    exact_bl = exact_number(std::vector<T> (other.digits.begin(), other.digits.begin() + left_half_length), true);
-	    exact_br = exact_number(std::vector<T> (other.digits.begin() + left_half_length, other.digits.end()), true);
-	} else if (b_pref_zeroes > 0) {
-	    if (b_pref_zeroes >= left_half_length) {
-		exact_bl = exact_number(std::vector<T> (), true);
-		exact_br = exact_number(other.digits, true);
-	    } else {
-		exact_bl = exact_number(std::vector<T> (other.digits.begin(), other.digits.begin() + left_half_length - b_pref_zeroes), true);
-		exact_br = exact_number(std::vector<T> (other.digits.begin() + left_half_length - b_pref_zeroes, other.digits.end()), true);
-	    }
-	    exact_al = exact_number(std::vector<T> (this->digits.begin(), this->digits.begin() + left_half_length), true);
-	    exact_ar = exact_number(std::vector<T> (this->digits.begin() + left_half_length, this->digits.end()), true);
-	} else {
-	    exact_al = exact_number(std::vector<T> (this->digits.begin(), this->digits.begin() + left_half_length), true);
-	    exact_ar = exact_number(std::vector<T> (this->digits.begin() + left_half_length, this->digits.end()), true);
-	    exact_bl = exact_number(std::vector<T> (other.digits.begin(), other.digits.begin() + left_half_length), true);
-	    exact_br = exact_number(std::vector<T> (other.digits.begin() + left_half_length, other.digits.end()), true);
-	}
+	<span style='color:#696969; '>// This is where we perform optimization (not appending zeroes in vector)</span>
+	<span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>a_pref_zeroes <span style='color:#808030; '>></span> <span style='color:#008c00; '>0</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+	    <span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>a_pref_zeroes <span style='color:#808030; '>></span><span style='color:#808030; '>=</span> left_half_length<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+		exact_al <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		exact_ar <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    <span style='color:#800080; '>}</span> <span style='color:#800000; font-weight:bold; '>else</span> <span style='color:#800080; '>{</span>
+		exact_al <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length <span style='color:#808030; '>-</span> a_pref_zeroes<span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		exact_ar <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length <span style='color:#808030; '>-</span> a_pref_zeroes<span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>end<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    <span style='color:#800080; '>}</span>
+	    exact_bl <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span>other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length<span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    exact_br <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span>other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length<span style='color:#808030; '>,</span> other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>end<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800080; '>}</span> <span style='color:#800000; font-weight:bold; '>else</span> <span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>b_pref_zeroes <span style='color:#808030; '>></span> <span style='color:#008c00; '>0</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+	    <span style='color:#800000; font-weight:bold; '>if</span> <span style='color:#808030; '>(</span>b_pref_zeroes <span style='color:#808030; '>></span><span style='color:#808030; '>=</span> left_half_length<span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
+		exact_bl <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		exact_br <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span>other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    <span style='color:#800080; '>}</span> <span style='color:#800000; font-weight:bold; '>else</span> <span style='color:#800080; '>{</span>
+		exact_bl <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span>other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length <span style='color:#808030; '>-</span> b_pref_zeroes<span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		exact_br <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span>other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length <span style='color:#808030; '>-</span> b_pref_zeroes<span style='color:#808030; '>,</span> other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>end<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    <span style='color:#800080; '>}</span>
+	    exact_al <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length<span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    exact_ar <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length<span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>end<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800080; '>}</span> <span style='color:#800000; font-weight:bold; '>else</span> <span style='color:#800080; '>{</span>
+	    exact_al <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length<span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    exact_ar <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span><span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length<span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>digits<span style='color:#808030; '>.</span>end<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    exact_bl <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span>other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length<span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	    exact_br <span style='color:#808030; '>=</span> exact_number<span style='color:#808030; '>(</span><span style='color:#666616; '>std</span><span style='color:#800080; '>::</span><span style='color:#603000; '>vector</span><span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> <span style='color:#808030; '>(</span>other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>begin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> left_half_length<span style='color:#808030; '>,</span> other<span style='color:#808030; '>.</span>digits<span style='color:#808030; '>.</span>end<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span><span style='color:#808030; '>,</span> <span style='color:#800000; font-weight:bold; '>true</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800080; '>}</span>
 
-	exact_number<T> sum_al_ar (exact_al);
-	exact_number<T> sum_bl_br (exact_bl);
+	exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> sum_al_ar <span style='color:#808030; '>(</span>exact_al<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	exact_number<span style='color:#800080; '>&lt;</span>T<span style='color:#800080; '>></span> sum_bl_br <span style='color:#808030; '>(</span>exact_bl<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	/*
-	    Variable explanation
-	    sum_al_ar = al + ar
-	    sum_bl_br = bl + br
-	*/
-	sum_al_ar.add_vector(exact_ar, base - 1);
-	sum_bl_br.add_vector(exact_br, base - 1);
+	<span style='color:#696969; '>/*</span>
+<span style='color:#696969; '>	    Variable explanation</span>
+<span style='color:#696969; '>	    sum_al_ar = al + ar</span>
+<span style='color:#696969; '>	    sum_bl_br = bl + br</span>
+<span style='color:#696969; '>	*/</span>
+	sum_al_ar<span style='color:#808030; '>.</span>add_vector<span style='color:#808030; '>(</span>exact_ar<span style='color:#808030; '>,</span> base <span style='color:#808030; '>-</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	sum_bl_br<span style='color:#808030; '>.</span>add_vector<span style='color:#808030; '>(</span>exact_br<span style='color:#808030; '>,</span> base <span style='color:#808030; '>-</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	exact_al.karatsuba_multiplication(exact_bl, base);
-	sum_al_ar.karatsuba_multiplication(sum_bl_br, base);
-	exact_ar.karatsuba_multiplication(exact_br, base);
-	/*
-	    Variable explanation
-	    exact_al = al * bl
-	    sum_al_ar = (al + ar) * (bl + br)
-	    exact_ar = ar * br
-	*/
+	exact_al<span style='color:#808030; '>.</span>karatsuba_multiplication<span style='color:#808030; '>(</span>exact_bl<span style='color:#808030; '>,</span> base<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	sum_al_ar<span style='color:#808030; '>.</span>karatsuba_multiplication<span style='color:#808030; '>(</span>sum_bl_br<span style='color:#808030; '>,</span> base<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	exact_ar<span style='color:#808030; '>.</span>karatsuba_multiplication<span style='color:#808030; '>(</span>exact_br<span style='color:#808030; '>,</span> base<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#696969; '>/*</span>
+<span style='color:#696969; '>	    Variable explanation</span>
+<span style='color:#696969; '>	    exact_al = al * bl</span>
+<span style='color:#696969; '>	    sum_al_ar = (al + ar) * (bl + br)</span>
+<span style='color:#696969; '>	    exact_ar = ar * br</span>
+<span style='color:#696969; '>	*/</span>
 
-	sum_al_ar.subtract_vector(exact_al, base - 1);
-	sum_al_ar.subtract_vector(exact_ar, base - 1);
-	/*
-	    sum_al_ar = al * br + ar * bl
-	*/
+	sum_al_ar<span style='color:#808030; '>.</span>subtract_vector<span style='color:#808030; '>(</span>exact_al<span style='color:#808030; '>,</span> base <span style='color:#808030; '>-</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	sum_al_ar<span style='color:#808030; '>.</span>subtract_vector<span style='color:#808030; '>(</span>exact_ar<span style='color:#808030; '>,</span> base <span style='color:#808030; '>-</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#696969; '>/*</span>
+<span style='color:#696969; '>	    sum_al_ar = al * br + ar * bl</span>
+<span style='color:#696969; '>	*/</span>
 
-	// multiply exact_al by base^(2 * right_half_length)
-	exact_al.exponent += 2 * right_half_length;
+	<span style='color:#696969; '>// multiply exact_al by base^(2 * right_half_length)</span>
+	exact_al<span style='color:#808030; '>.</span>exponent <span style='color:#808030; '>+</span><span style='color:#808030; '>=</span> <span style='color:#008c00; '>2</span> <span style='color:#808030; '>*</span> right_half_length<span style='color:#800080; '>;</span>
 
-	// multiply sum_al_ar by base^(right_half_length)
-	sum_al_ar.exponent += right_half_length;
+	<span style='color:#696969; '>// multiply sum_al_ar by base^(right_half_length)</span>
+	sum_al_ar<span style='color:#808030; '>.</span>exponent <span style='color:#808030; '>+</span><span style='color:#808030; '>=</span> right_half_length<span style='color:#800080; '>;</span>
 
-	exact_al.add_vector(sum_al_ar, base - 1);
-	exact_al.add_vector(exact_ar, base - 1);
+	exact_al<span style='color:#808030; '>.</span>add_vector<span style='color:#808030; '>(</span>sum_al_ar<span style='color:#808030; '>,</span> base <span style='color:#808030; '>-</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	exact_al<span style='color:#808030; '>.</span>add_vector<span style='color:#808030; '>(</span>exact_ar<span style='color:#808030; '>,</span> base <span style='color:#808030; '>-</span> <span style='color:#008c00; '>1</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	*this = exact_al;
-	this->exponent += -(a_size + b_size) + (a_exponent + b_exponent);
-	this->positive = (a_sign == b_sign);
-	this->normalize();
+	<span style='color:#808030; '>*</span><span style='color:#800000; font-weight:bold; '>this</span> <span style='color:#808030; '>=</span> exact_al<span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>exponent <span style='color:#808030; '>+</span><span style='color:#808030; '>=</span> <span style='color:#808030; '>-</span><span style='color:#808030; '>(</span>a_size <span style='color:#808030; '>+</span> b_size<span style='color:#808030; '>)</span> <span style='color:#808030; '>+</span> <span style='color:#808030; '>(</span>a_exponent <span style='color:#808030; '>+</span> b_exponent<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>positive <span style='color:#808030; '>=</span> <span style='color:#808030; '>(</span>a_sign <span style='color:#808030; '>=</span><span style='color:#808030; '>=</span> b_sign<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>this</span><span style='color:#808030; '>-</span><span style='color:#808030; '>></span>normalize<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-}
-```
+<span style='color:#800080; '>}</span>
+</pre>
+<!--Created using ToHtml.com on 2020-08-29 07:08:54 UTC -->
+
 Initial commit regarding Karatsuba algorithm:   [https://github.com/BoostGSoC20/Real/commit/83e43dede5e2d101240777fc1eb0dd14a64f3eba](https://github.com/BoostGSoC20/Real/commit/83e43dede5e2d101240777fc1eb0dd14a64f3eba)  
 
 ### Tests and Documentation
