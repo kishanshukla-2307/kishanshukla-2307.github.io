@@ -204,7 +204,7 @@ Intial commit regarding Pi: [https://github.com/BoostGSoC20/Real/commit/34ac759f
 As % operator is only defined for integers, this operator was overloaded by Vikram in his integer_number class. The operator used the Knuth's long division algorithm to find the remainder.
 
 ### Calculation of digits of real_algorithm number during compile-time
-This task was proposed to provide an optimization for real_algorithm numbers. The task involved calculating the starting few digits of real_algorithm number during compilation, if the function for n'th digit provided by the user is constexpr. It seemed that the task wasn't doable since it was not possible to detect whether the function provided by the user is constepxr or not. (In normal scenarios it is possible to check whether the function is constexpr or not, but in our case the since the was passed between many functions before the check was performed it's constexpr'ness is lost in most of the cases.)  
+This task was proposed to provide an optimization for real_algorithm numbers. The task involved calculating the starting few digits of real_algorithm number during compilation, if the function for n'th digit provided by the user is constexpr. It seemed that the task wasn't doable since it was not possible to detect whether the function provided by the user is constepxr or not. (In normal scenarios it is possible to check whether the function is constexpr or not, but in our case the since the function was passed between many functions before the check was performed it's constexpr'ness is lost in most of the cases.)  
 
 
 ## Phase III
