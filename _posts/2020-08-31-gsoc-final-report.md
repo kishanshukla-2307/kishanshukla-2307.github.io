@@ -337,67 +337,67 @@ Initial commit regarding Karatsuba algorithm:   [https://github.com/BoostGSoC20/
 All required tests and documentation were made in parallel with the code implementation. 
 Following is overview of how test for pi has been implemented :  
 
-```cpp
-SECTION("TRIGONOMETRIC PROPERTIES") {
+<pre style='color:#000000;background:#F5F5F5;font-size:9pt;'>SECTION<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>TRIGONOMETRIC PROPERTIES</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
 
-	SECTION("sin(pi) == 0") {
+	SECTION<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>sin(pi) == 0</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
 
-		real sin_pi = real::sin(pi);
-		boost::real::exact_number zero("0");
+		real sin_pi <span style='color:#808030; '>=</span> real<span style='color:#800080; '>::</span><span style='color:#603000; '>sin</span><span style='color:#808030; '>(</span>pi<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		boost<span style='color:#800080; '>::</span>real<span style='color:#800080; '>::</span>exact_number zero<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>0</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-		auto sin_pi_iterator = sin_pi.get_real_itr().cbegin();
-		++sin_pi_iterator;
+		<span style='color:#800000; font-weight:bold; '>auto</span> sin_pi_iterator <span style='color:#808030; '>=</span> sin_pi<span style='color:#808030; '>.</span>get_real_itr<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span>cbegin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>sin_pi_iterator<span style='color:#800080; '>;</span>
 
-		CHECK(sin_pi_iterator.get_interval().lower_bound <= sin_pi_iterator.get_interval().upper_bound);
-		CHECK(!sin_pi_iterator.get_interval().lower_bound.positive);
-		CHECK(sin_pi_iterator.get_interval().upper_bound.positive);
-		++sin_pi_iterator;
+		CHECK<span style='color:#808030; '>(</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span> <span style='color:#808030; '>&lt;</span><span style='color:#808030; '>=</span> sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		CHECK<span style='color:#808030; '>(</span><span style='color:#808030; '>!</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span><span style='color:#808030; '>.</span>positive<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		CHECK<span style='color:#808030; '>(</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>.</span>positive<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>sin_pi_iterator<span style='color:#800080; '>;</span>
 
-		CHECK(sin_pi_iterator.get_interval().lower_bound <= sin_pi_iterator.get_interval().upper_bound);
-		CHECK(!sin_pi_iterator.get_interval().lower_bound.positive);
-		CHECK(sin_pi_iterator.get_interval().upper_bound.positive);
-		++sin_pi_iterator;
+		CHECK<span style='color:#808030; '>(</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span> <span style='color:#808030; '>&lt;</span><span style='color:#808030; '>=</span> sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		CHECK<span style='color:#808030; '>(</span><span style='color:#808030; '>!</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span><span style='color:#808030; '>.</span>positive<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		CHECK<span style='color:#808030; '>(</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>.</span>positive<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>sin_pi_iterator<span style='color:#800080; '>;</span>
 
-		CHECK(sin_pi_iterator.get_interval().lower_bound <= sin_pi_iterator.get_interval().upper_bound);
-		CHECK(!sin_pi_iterator.get_interval().lower_bound.positive);
-		CHECK(sin_pi_iterator.get_interval().upper_bound.positive);
-		++sin_pi_iterator;
+		CHECK<span style='color:#808030; '>(</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span> <span style='color:#808030; '>&lt;</span><span style='color:#808030; '>=</span> sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		CHECK<span style='color:#808030; '>(</span><span style='color:#808030; '>!</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span><span style='color:#808030; '>.</span>positive<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		CHECK<span style='color:#808030; '>(</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>.</span>positive<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>sin_pi_iterator<span style='color:#800080; '>;</span>
 
-		CHECK(sin_pi_iterator.get_interval().lower_bound <= sin_pi_iterator.get_interval().upper_bound);
-		CHECK(!sin_pi_iterator.get_interval().lower_bound.positive);
-		CHECK(sin_pi_iterator.get_interval().upper_bound.positive);
-		++sin_pi_iterator;
-	}
+		CHECK<span style='color:#808030; '>(</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span> <span style='color:#808030; '>&lt;</span><span style='color:#808030; '>=</span> sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		CHECK<span style='color:#808030; '>(</span><span style='color:#808030; '>!</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span><span style='color:#808030; '>.</span>positive<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		CHECK<span style='color:#808030; '>(</span>sin_pi_iterator<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>.</span>positive<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+		<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>sin_pi_iterator<span style='color:#800080; '>;</span>
+	<span style='color:#800080; '>}</span>
 
-}
+<span style='color:#800080; '>}</span>
 
-SECTION("e^pi > pi^e") {
+SECTION<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>e^pi > pi^e</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span> <span style='color:#800080; '>{</span>
 
-	real one("1");
-	real e("2.718281828459045235360287471352662497757");
-	real e_raised_to_pi = real::power(e, pi);
-	real pi_raised_to_e = real::power(pi, e);
+	real one<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>1</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	real e<span style='color:#808030; '>(</span><span style='color:#800000; '>"</span><span style='color:#0000e6; '>2.718281828459045235360287471352662497757</span><span style='color:#800000; '>"</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	real e_raised_to_pi <span style='color:#808030; '>=</span> real<span style='color:#800080; '>::</span>power<span style='color:#808030; '>(</span>e<span style='color:#808030; '>,</span> pi<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	real pi_raised_to_e <span style='color:#808030; '>=</span> real<span style='color:#800080; '>::</span>power<span style='color:#808030; '>(</span>pi<span style='color:#808030; '>,</span> e<span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	auto itr1 = e_raised_to_pi.get_real_itr().cbegin();
-	auto itr2 = pi_raised_to_e.get_real_itr().cbegin();
+	<span style='color:#800000; font-weight:bold; '>auto</span> itr1 <span style='color:#808030; '>=</span> e_raised_to_pi<span style='color:#808030; '>.</span>get_real_itr<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span>cbegin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+	<span style='color:#800000; font-weight:bold; '>auto</span> itr2 <span style='color:#808030; '>=</span> pi_raised_to_e<span style='color:#808030; '>.</span>get_real_itr<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span>cbegin<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	++itr1;
-	++itr2;
+	<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>itr1<span style='color:#800080; '>;</span>
+	<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>itr2<span style='color:#800080; '>;</span>
 
-	CHECK(itr1.get_interval().lower_bound >= itr2.get_interval().upper_bound);
+	CHECK<span style='color:#808030; '>(</span>itr1<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span> <span style='color:#808030; '>></span><span style='color:#808030; '>=</span> itr2<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	++itr1;
-	++itr2;
+	<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>itr1<span style='color:#800080; '>;</span>
+	<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>itr2<span style='color:#800080; '>;</span>
 
-	CHECK(itr1.get_interval().lower_bound >= itr2.get_interval().upper_bound);
+	CHECK<span style='color:#808030; '>(</span>itr1<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span> <span style='color:#808030; '>></span><span style='color:#808030; '>=</span> itr2<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-	++itr1;
-	++itr2;
+	<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>itr1<span style='color:#800080; '>;</span>
+	<span style='color:#808030; '>+</span><span style='color:#808030; '>+</span>itr2<span style='color:#800080; '>;</span>
 
-	CHECK(itr1.get_interval().lower_bound >= itr2.get_interval().upper_bound);
+	CHECK<span style='color:#808030; '>(</span>itr1<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>lower_bound</span> <span style='color:#808030; '>></span><span style='color:#808030; '>=</span> itr2<span style='color:#808030; '>.</span>get_interval<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span><span style='color:#603000; '>upper_bound</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
-}
-```
+<span style='color:#800080; '>}</span>
+</pre>
+<!--Created using ToHtml.com on 2020-08-29 07:39:49 UTC -->
 
 ## Commit History  
 [Here](https://github.com/BoostGSoC20/Real/commits?author=kishanshukla-2307) is the list of all the commits that were merged in Boost.Real master during or before the start of GSoC 2020 coding period.  
