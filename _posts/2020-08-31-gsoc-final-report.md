@@ -65,6 +65,8 @@ Intial commit regarding division operator: [https://github.com/BoostGSoC20/Real/
 Integral Power was implemented as new operation between two reals. The implementation was based on const_precision_iterators which makes it more general as were the other operations already present. Binary exponentiation was used to evaluate the powers, making the complexity O(C * log(exponent)) where C is the time taken to multiply two reals.  
 Following is overview of how power operation has been implemented (few lines of code has been skipped) :  
 
+:::
+
 <pre style='color:#000000;background:#F5F5F5;font-size:9pt'><span style='color:#800000; font-weight:bold; '>case </span><span style='color:#7d0045; '>OPERATION</span><span style='color:#800080; '>::</span><span style='color:#7d0045; '>INTEGER_POWER</span><span style='color:#e34adc; '>:</span> <span style='color:#800080; '>{</span>
 	ro<span style='color:#808030; '>.</span>get_rhs_itr<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span>iterate_n_times<span style='color:#808030; '>(</span>ro<span style='color:#808030; '>.</span>get_rhs_itr<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span>maximum_precision<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
@@ -118,7 +120,7 @@ Following is overview of how power operation has been implemented (few lines of 
 </pre>
 <!--Created using ToHtml.com on 2020-08-29 06:39:38 UTC -->
 
-
+:::
 
 Intial commit regarding integral power operation: [https://github.com/BoostGSoC20/Real/commit/84f36e9e2451f15d1ebf42178944e91eb34b7147](https://github.com/BoostGSoC20/Real/commit/84f36e9e2451f15d1ebf42178944e91eb34b7147)  
 
