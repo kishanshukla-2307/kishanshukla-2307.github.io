@@ -66,63 +66,6 @@ Integral Power was implemented as new operation between two reals. The implement
 Following is overview of how power operation has been implemented (few lines of code has been skipped) :  
 
 
-<pre>
-<code>
-
-case OPERATION::INTEGER_POWER: {
-	ro.get_rhs_itr().iterate_n_times(ro.get_rhs_itr().maximum_precision());
-
-	if (ro.get_rhs_itr().get_interval().lower_bound != ro.get_rhs_itr().get_interval().upper_bound ||
-	(int) ro.get_rhs_itr().get_interval().lower_bound.digits.size() > ro.get_rhs_itr().get_interval().lower_bound.exponent) {
-		throw non_integral_exponent_exception();
-	}
-
-	if (ro.get_rhs_itr().get_interval().upper_bound.positive == false) {
-		throw negative_integers_not_supported();
-	}
-
-	if (ro.get_lhs_itr().get_interval().positive()) {
-		this->_approximation_interval.upper_bound = 
-			tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().upper_bound, exponent);
-		this->_approximation_interval.lower_bound =
-			tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().lower_bound, exponent);
-	} else if (ro.get_lhs_itr().get_interval().negative()) {
-		if (exponent_is_even) {
-			this->_approximation_interval.upper_bound =
-			    tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().lower_bound, exponent);
-			this->_approximation_interval.lower_bound =
-			    tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().upper_bound, exponent);
-		} else {
-			this->_approximation_interval.upper_bound =
-			    tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().upper_bound, exponent);
-			this->_approximation_interval.lower_bound =
-			    tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().lower_bound, exponent);
-		}
-	} else {
-		if (exponent_is_even) {
-			if (ro.get_lhs_itr().get_interval().upper_bound.abs() > ro.get_lhs_itr().get_interval().lower_bound.abs()) {
-				this->_approximation_interval.upper_bound =
-					tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().upper_bound, exponent);
-				this->_approximation_interval.lower_bound = zero;
-			} else {
-				this->_approximation_interval.upper_bound =
-					tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().lower_bound, exponent);
-				this->_approximation_interval.lower_bound = zero;
-			}
-		} else {
-			this->_approximation_interval.upper_bound =
-				tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().upper_bound, exponent);
-			this->_approximation_interval.lower_bound =
-				tmp.binary_exponentiation(ro.get_lhs_itr().get_interval().lower_bound, exponent);
-		}
-	}
-
-	break;
-} 
-
-</code>
-</pre>
-
 <pre style='color:#000000;background:#ffffff;'><span style='color:#800000; font-weight:bold; '>case </span><span style='color:#7d0045; '>OPERATION</span><span style='color:#800080; '>::</span><span style='color:#7d0045; '>INTEGER_POWER</span><span style='color:#e34adc; '>:</span> <span style='color:#800080; '>{</span>
 	ro<span style='color:#808030; '>.</span>get_rhs_itr<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span>iterate_n_times<span style='color:#808030; '>(</span>ro<span style='color:#808030; '>.</span>get_rhs_itr<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>.</span>maximum_precision<span style='color:#808030; '>(</span><span style='color:#808030; '>)</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
 
