@@ -66,7 +66,7 @@ Integral Power was implemented as new operation between two reals. The implement
 Following is overview of how power operation has been implemented (few lines of code has been skipped) :  
 
 <figure>
-  <figcaption>Your code title</figcaption>
+  <figcaption>Power Operation</figcaption>
   <pre>
     <code>
     
@@ -122,7 +122,8 @@ Following is overview of how power operation has been implemented (few lines of 
 	}
     </code>
   </pre>
-</figure>
+</figure>  
+
 
 Intial commit regarding integral power operation: [https://github.com/BoostGSoC20/Real/commit/84f36e9e2451f15d1ebf42178944e91eb34b7147](https://github.com/BoostGSoC20/Real/commit/84f36e9e2451f15d1ebf42178944e91eb34b7147)  
 
